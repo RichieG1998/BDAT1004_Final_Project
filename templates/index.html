@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptocurrency Prices</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background-color: #87ceeb; /* Sky blue */
+            margin: 0;
+            padding: 0;
+            color: #000; /* Black */
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 40px;
+            color: #000; /* Black */
+            font-size: 24px;
+        }
+
+        form {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #crypto-input {
+            padding: 10px;
+            width: 300px;
+            border: 2px solid #87ceeb; /* Sky blue */
+            border-radius: 20px;
+            font-size: 16px;
+            margin-right: 10px;
+            color: #000; /* Black */
+            background-color: #fff;
+        }
+
+        #search-btn {
+            padding: 12px 24px;
+            background-color: #87ceeb; /* Sky blue */
+            color: #fff;
+            border: 2px solid #87ceeb; /* Sky blue */
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+            #search-btn:hover {
+                background-color: #4682b4; /* Steel blue */
+            }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th, td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            color: #000; /* Black */
+        }
+
+        th {
+            background-color: #87ceeb; /* Sky blue */
+            color: #000; /* Black */
+        }
+
+        tr:nth-child(even) {
+            background-color: #f0f0f0;
+        }
+
+        tr:hover {
+            background-color: #e0e0e0;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+            .pagination a {
+                padding: 10px 20px;
+                margin: 0 5px;
+                background-color: #87ceeb; /* Sky blue */
+                color: #fff;
+                border: 2px solid #87ceeb; /* Sky blue */
+                border-radius: 20px;
+                cursor: pointer;
+                font-size: 16px;
+                text-decoration: none;
+                transition: background-color 0.3s;
+            }
+
+                .pagination a:hover {
+                    background-color: #4682b4; /* Steel blue */
+                }
+
+        /* Additional style for the button */
+        .top-right {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+            /* Style for the button itself */
+            .top-right button {
+                padding: 12px 24px;
+                background-color: #87ceeb; /* Sky blue */
+                color: #fff;
+                border: 2px solid #87ceeb; /* Sky blue */
+                border-radius: 30px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: background-color 0.3s;
+            }
+
+                /* Hover effect for the button */
+                .top-right button:hover {
+                    background-color: #4682b4; /* Steel blue */
+                }
+ 
+    </style>
+
+
+
+</head>
+<body>
+    <h1>Cryptocurrency Prices</h1>
+
+    <form action="/filter" method="POST">
+        <label for="crypto-input">Enter Cryptocurrency Symbols (separated by comma):</label>
+        <input type="text" id="crypto-input" name="cryptos" placeholder="Enter symbols to search e.g. BTC, ETH">
+        <button type="submit" id="search-btn">Search</button>
+    </form>
+
+    <div class="top-right">
+        <form action="/charts">
+            <button type="submit">Charts</button>
+        </form>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp (EDT)</th>
+                <th>Symbol</th>
+                <th>Price (CAD)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in crypto_data %}
+            <tr>
+                <td>{{ data.timestamp|datetimeformat }}</td>
+                <td>{{ data.symbol }}</td>
+                <td>{{ data.price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <a href="{{ url_for('index', page=1, per_page=per_page) }}">First</a>
+        {% if pagination.has_prev %}
+        <a href="{{ url_for('index', page=page - 1, per_page=per_page) }}">Previous</a>
+        {% endif %}
+        <span>{{ pagination.page }} / {{ total_pages }}</span>
+        {% if pagination.has_next %}
+        <a href="{{ url_for('index', page=page + 1, per_page=per_page) }}">Next</a>
+        {% endif %}
+        <a href="{{ url_for('index', page=total_pages, per_page=per_page) }}">Last</a>
+    </div>
+
+
+</body>
+</html>
